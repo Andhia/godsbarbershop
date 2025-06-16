@@ -1,0 +1,157 @@
+# DOKUMENTASI SISTEM BARBERSHOPKU
+
+## A. GAMBARAN UMUM SISTEM
+Sistem Barbershopku adalah platform booking online untuk barbershop yang memungkinkan pelanggan melakukan reservasi layanan potong rambut secara online. Sistem ini menghubungkan pelanggan dengan barbershop, memudahkan manajemen jadwal, dan mengotomatisasi proses pembayaran.
+
+## B. TEKNOLOGI YANG DIGUNAKAN
+1. Backend Framework: Laravel (PHP)
+2. Frontend: Inertia.js
+3. CSS Framework: Tailwind CSS
+4. Build Tool: Vite
+5. Database: MySQL
+6. Email Service: Custom Email Service
+
+## C. KOMPONEN UTAMA SISTEM
+
+### 1. Sistem Booking
+#### Data yang Disimpan:
+- Nama customer
+- Tanggal booking
+- Email customer
+- Layanan yang dipilih (service_id)
+- Jadwal yang dipilih (schedule_id)
+- Tukang cukur yang dipilih (cutter_id)
+- Status booking
+
+#### Relasi Data:
+- Satu booking → satu layanan
+- Satu booking → satu jadwal
+- Satu booking → satu tukang cukur
+- Satu booking → satu bukti pembayaran
+
+### 2. Manajemen Layanan (Services)
+#### Informasi yang Disimpan:
+- Nama layanan
+- Harga
+- Deskripsi
+- Gambar layanan
+
+### 3. Manajemen Tukang Cukur (Cutters)
+#### Data yang Disimpan:
+- Nama tukang cukur
+- Foto tukang cukur
+- Relasi dengan booking
+
+### 4. Sistem Penjadwalan (Schedule)
+#### Komponen:
+- Range waktu (format: "11:00-12:00")
+- Status ketersediaan
+- Relasi dengan booking
+
+### 5. Sistem Pembayaran
+#### Proses:
+1. Generate link pembayaran
+2. Upload bukti pembayaran
+3. Verifikasi oleh admin
+4. Konfirmasi ke pelanggan
+
+#### Data Pembayaran:
+- ID booking
+- Gambar bukti pembayaran
+- Status verifikasi
+
+### 6. Sistem Notifikasi Email
+#### Jenis Notifikasi:
+1. Email Booking Baru:
+   - Link pembayaran
+   - Detail booking
+   - Batas waktu pembayaran
+
+2. Email Konfirmasi Pembayaran:
+   - Nomor antrian
+   - Detail jadwal
+   - Informasi layanan
+
+## D. ALUR SISTEM
+
+### 1. Alur Booking:
+```
+Customer → Pilih Layanan → Pilih Tanggal → Pilih Jadwal → Pilih Kapster → Isi Data → Terima Email
+```
+
+### 2. Alur Pembayaran:
+```
+Terima Link → Upload Bukti → Menunggu Konfirmasi → Terima Konfirmasi
+```
+
+### 3. Alur Admin:
+```
+Login → Lihat Booking → Cek Bukti Pembayaran → Konfirmasi → Sistem Kirim Email
+```
+
+## E. STATUS DAN KONDISI
+
+### 1. Status Booking:
+- Status 1: Menunggu pembayaran
+- Status 2: Pembayaran dikonfirmasi
+
+### 2. Status Jadwal:
+- False: Slot tersedia
+- True: Slot sudah dibooking
+
+## F. FITUR KEAMANAN
+
+### 1. Validasi:
+- Validasi input untuk semua form
+- Validasi file gambar untuk bukti pembayaran
+- Validasi email
+
+### 2. Autentikasi:
+- Middleware auth untuk halaman admin
+- Proteksi route admin
+- Verifikasi email customer
+
+## G. MANAJEMEN DATA
+
+### 1. Model Relationships:
+- Booking → Service (belongsTo)
+- Booking → Schedule (belongsTo)
+- Booking → Cutter (belongsTo)
+- Booking → PaymentProof (hasOne)
+- Service → Bookings (hasMany)
+- Schedule → Bookings (hasMany)
+- Cutter → Bookings (hasMany)
+
+### 2. Penyimpanan File:
+- Bukti pembayaran: /storage/app/public/payment_proofs
+- Gambar layanan: /storage/app/public/services
+- Foto tukang cukur: /storage/app/public/cutters
+
+## H. ANTARMUKA PENGGUNA
+
+### 1. Halaman Publik:
+- Homepage (/)
+- About (/about)
+- Service (/service)
+- Contact (/contact)
+
+### 2. Halaman Customer:
+- Form Booking (/booking/create)
+- Halaman Pembayaran (/payment/{id})
+- Upload Bukti (/payment/submit/{id})
+
+### 3. Halaman Admin:
+- Dashboard (/dashboard)
+- Manajemen Booking (/booking)
+- Manajemen Cutter (/cutters)
+- Manajemen Service (/services)
+- Konfirmasi Pembayaran
+
+## I. PENGEMBANGAN SELANJUTNYA
+Beberapa area yang bisa dikembangkan:
+1. Integrasi payment gateway
+2. Sistem rating dan review
+3. Notifikasi WhatsApp
+4. Sistem membership
+5. Laporan dan analitik
+6. Mobile app version

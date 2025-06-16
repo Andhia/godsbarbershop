@@ -1,0 +1,185 @@
+# Dokumentasi Database Sistem Barbershop
+
+## A. Pendahuluan
+Database sistem Barbershop ini dibangun menggunakan MySQL dengan framework Laravel. Sistem database dirancang untuk mendukung operasional barbershop online dengan fitur booking, manajemen layanan, dan pengelolaan tukang cukur.
+
+## B. Struktur Database
+
+### 1. Tabel Users (Pengguna)
+```sql
+- id: bigint unsigned (Primary Key, Auto Increment)
+- name: varchar(255) - Nama pengguna
+- email: varchar(255) - Email pengguna (Unique)
+- email_verified_at: timestamp - Waktu verifikasi email
+- password: varchar(255) - Password terenkripsi
+- remember_token: varchar(100) - Token untuk fitur "Remember Me"
+- created_at, updated_at: timestamp
+```
+**Penjelasan:**
+- Menggunakan sistem autentikasi bawaan Laravel
+- Email bersifat unik untuk mencegah duplikasi akun
+- Password dienkripsi menggunakan bcrypt untuk keamanan
+- Mendukung fitur "Remember Me" untuk kenyamanan pengguna
+- Dilengkapi sistem verifikasi email
+
+### 2. Tabel Services (Layanan)
+```sql
+- id: bigint unsigned (Primary Key, Auto Increment)
+- name: varchar(255) - Nama layanan
+- price: decimal(8,2) - Harga layanan
+- description: text - Deskripsi layanan
+- image: varchar(255) - Gambar layanan
+- created_at, updated_at: timestamp
+```
+**Penjelasan:**
+- Decimal(8,2) untuk harga memastikan akurasi perhitungan
+- Deskripsi menggunakan tipe text untuk konten panjang
+- Gambar disimpan sebagai path/URL untuk efisiensi
+
+### 3. Tabel Cutters (Tukang Cukur)
+```sql
+- id: bigint unsigned (Primary Key, Auto Increment)
+- name: varchar(255) - Nama tukang cukur
+- image: varchar(255) - Foto tukang cukur
+- created_at, updated_at: timestamp
+```
+**Penjelasan:**
+- Menyimpan profil tukang cukur
+- Foto disimpan sebagai path/URL
+- Dapat dikembangkan dengan menambah rating/review
+
+### 4. Tabel Schedules (Jadwal)
+```sql
+- id: bigint unsigned (Primary Key, Auto Increment)
+- time_range: varchar(255) - Rentang waktu
+- status: tinyint(1) - Status ketersediaan
+- created_at, updated_at: timestamp
+```
+**Penjelasan:**
+- Status menggunakan tinyint(1) untuk efisiensi
+- time_range menyimpan slot waktu dalam format terstandar
+- Mendukung manajemen ketersediaan jadwal
+
+### 5. Tabel Bookings (Pemesanan)
+```sql
+- id: bigint unsigned (Primary Key, Auto Increment)
+- customer_name: varchar(255)
+- service_id: bigint unsigned (Foreign Key)
+- cutter_id: bigint unsigned (Foreign Key)
+- schedule_id: bigint unsigned (Foreign Key)
+- date: date
+- status: varchar(255)
+- created_at, updated_at: timestamp
+```
+**Penjelasan:**
+- Terhubung dengan Services, Cutters, dan Schedules
+- Mencatat riwayat pemesanan
+- Status untuk tracking progress booking
+
+### 6. Tabel Payment_Proofs (Bukti Pembayaran)
+```sql
+- id: bigint unsigned (Primary Key, Auto Increment)
+- booking_id: bigint unsigned (Foreign Key)
+- image: varchar(255)
+- created_at, updated_at: timestamp
+```
+**Penjelasan:**
+- One-to-One relationship dengan Bookings
+- Menyimpan bukti pembayaran untuk setiap booking
+
+## C. Relasi Antar Tabel
+
+1. **Bookings -> Services (Many-to-One)**
+   - Setiap booking terhubung dengan satu layanan
+   - Satu layanan dapat memiliki banyak booking
+   - Integritas referensial dijaga dengan foreign key
+
+2. **Bookings -> Cutters (Many-to-One)**
+   - Setiap booking ditangani satu tukang cukur
+   - Satu tukang cukur dapat menangani banyak booking
+   - Mendukung pembagian tugas yang efisien
+
+3. **Bookings -> Schedules (Many-to-One)**
+   - Setiap booking terikat dengan slot waktu tertentu
+   - Satu slot waktu dapat digunakan untuk satu booking
+   - Mencegah konflik jadwal
+
+4. **Payment_Proofs -> Bookings (One-to-One)**
+   - Setiap booking memiliki satu bukti pembayaran
+   - Relasi one-to-one untuk tracking pembayaran
+   - Memudahkan verifikasi transaksi
+
+## D. Keamanan Database
+
+1. **Enkripsi Data Sensitif**
+   - Password dienkripsi menggunakan bcrypt
+   - Remember token untuk autentikasi aman
+   - Email verification untuk validasi pengguna
+
+2. **Integritas Data**
+   - Foreign key constraints mencegah data orphan
+   - Timestamp untuk audit trail
+   - Tipe data yang tepat untuk setiap kolom
+
+3. **Validasi Data**
+   - Email unik mencegah duplikasi akun
+   - Status booking untuk tracking yang akurat
+   - Format waktu dan tanggal terstandarisasi
+
+## E. Optimasi dan Performa
+
+1. **Indeks Database**
+   - Primary key menggunakan auto_increment
+   - Foreign key diindeks untuk query cepat
+   - Email diindeks untuk pencarian efisien
+
+2. **Tipe Data Efisien**
+   - Tinyint untuk status (1 byte)
+   - Varchar sesuai kebutuhan
+   - Timestamp untuk audit trail
+
+3. **Relasi Terstruktur**
+   - Normalisasi mencegah redundansi
+   - Foreign key untuk integritas
+   - Relasi yang jelas dan terorganisir
+
+## F. Pengembangan Masa Depan
+
+1. **Skalabilitas**
+   - Struktur mendukung penambahan fitur
+   - Dapat ditambah rating dan review
+   - Ekspansi untuk multiple cabang
+
+2. **Maintenance**
+   - Backup regular
+   - Monitoring performa
+   - Update sesuai kebutuhan
+
+## G. Pengujian Database
+
+1. **Unit Testing**
+   - Validasi input data
+   - Verifikasi relasi
+   - Testing constraint
+
+2. **Integrasi**
+   - Testing alur booking
+   - Verifikasi pembayaran
+   - Manajemen jadwal
+
+3. **Performa**
+   - Response time
+   - Concurrent users
+   - Query optimization
+
+## H. Kesimpulan
+
+Database sistem Barbershop ini dirancang dengan mempertimbangkan:
+1. Keamanan data
+2. Integritas referensial
+3. Performa optimal
+4. Kemudahan maintenance
+5. Skalabilitas
+6. User experience
+
+Sistem ini siap mendukung operasional barbershop online dengan fitur lengkap dan dapat diandalkan.

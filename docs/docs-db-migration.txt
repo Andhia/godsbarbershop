@@ -1,0 +1,135 @@
+# Persiapan Sidang: Database Migration Barbershop
+
+## Pengantar
+"Sebelum sidang, pahami bahwa dosen penguji akan menggali pemahaman Anda tentang database, terutama penggunaan migration di Laravel. Berikut simulasi tanya jawab yang mungkin muncul saat sidang."
+
+## Simulasi Tanya Jawab Sidang
+
+### 1. Pemahaman Dasar Migration
+
+Penguji: "Saya lihat di sistem Anda menggunakan migration Laravel. Kenapa tidak langsung buat database di phpMyAdmin saja?"
+
+Mahasiswa: "Baik Pak/Bu, saya menggunakan migration karena beberapa alasan penting. Pertama, dengan migration, struktur database saya terdokumentasi dengan baik dalam bentuk kode. Kedua, ketika nanti ada perubahan atau penambahan fitur, saya bisa melacak setiap perubahan database. Ketiga, kalau ada kesalahan, saya bisa rollback ke versi sebelumnya dengan mudah. Ini sangat membantu dalam pengembangan dan maintenance sistem."
+
+Penguji: "Oke, coba jelaskan bagaimana cara kerja migration di project Anda?"
+
+Mahasiswa: "Jadi di project saya Pak/Bu, setiap file migration diberi timestamp, contohnya '2024_11_23_201330_create_schedules_table.php'. Timestamp ini menentukan urutan eksekusi. Setiap file punya method up() untuk membuat atau mengubah tabel, dan down() untuk rollback. Saya menjalankannya dengan perintah 'php artisan migrate'."
+
+### 2. Struktur Database
+
+Penguji: "Coba jelaskan struktur tabel services Anda. Kenapa memilih tipe data seperti itu?"
+
+Mahasiswa: "Di tabel services Pak/Bu, saya menggunakan decimal(8,2) untuk harga karena butuh akurasi dalam perhitungan uang. Kalau pakai float bisa terjadi masalah pembulatan. Untuk nama layanan pakai varchar karena lebih efisien dibanding text, dan untuk deskripsi pakai text karena bisa lebih panjang. Semua ini mempertimbangkan efisiensi dan kebutuhan bisnis barbershop."
+
+### 3. Relasi Antar Tabel
+
+Penguji: "Saya lihat di tabel bookings ada beberapa foreign key. Jelaskan!"
+
+Mahasiswa: "Iya Pak/Bu, tabel bookings ini sebagai pusat transaksi yang terhubung ke tabel lain. Ada foreign key ke service_id (layanan yang dipilih), cutter_id (tukang cukur), dan schedule_id (jadwal). Saya menggunakan onDelete('cascade') supaya kalau data induk dihapus, data terkait juga ikut terhapus, mencegah data yang tidak valid."
+
+### 4. Keamanan Database
+
+Penguji: "Bagaimana Anda menangani keamanan di level database?"
+
+Mahasiswa: "Untuk keamanan Pak/Bu, saya implementasikan beberapa hal. Password di tabel users dienkripsi pakai bcrypt. Email harus unik dan terverifikasi. Untuk query, saya selalu pakai prepared statement Laravel untuk mencegah SQL injection. Semua input divalidasi dulu sebelum masuk database."
+
+### 5. Optimasi Performa
+
+Penguji: "Apa yang sudah Anda lakukan untuk optimasi database?"
+
+Mahasiswa: "Beberapa hal yang saya lakukan Pak/Bu:
+1. Indexing untuk foreign key dan kolom yang sering dicari
+2. Pemilihan tipe data yang tepat, seperti boolean untuk status jadwal
+3. Implementasi caching untuk data yang sering diakses
+4. Penggunaan queue untuk proses berat seperti email"
+
+### 6. Maintenance dan Backup
+
+Penguji: "Kalau terjadi kesalahan saat migrate bagaimana?"
+
+Mahasiswa: "Ada beberapa langkah yang saya siapkan Pak/Bu:
+1. Setiap migration punya method down() untuk rollback
+2. Bisa pakai perintah 'migrate:rollback' untuk mundur satu batch
+3. Kalau perlu fresh install, ada 'migrate:fresh'
+4. Yang penting, selalu backup data dulu sebelum migrasi besar"
+
+### 7. Pengembangan Masa Depan
+
+Penguji: "Bagaimana kalau nanti sistem mau dikembangkan? Apakah struktur database-nya mendukung?"
+
+Mahasiswa: "Iya Pak/Bu, saya sudah antisipasi. Struktur tabel modular, jadi mudah ditambah fitur baru. Contohnya, saya sudah siapkan migration terpisah untuk menambah kolom image di tabel services. Ke depan bisa ditambah fitur rating, multi-cabang, atau loyalty points tanpa merusak struktur yang ada."
+
+### 8. Validasi Data
+
+Penguji: "Bagaimana Anda memastikan data yang masuk valid?"
+
+Mahasiswa: "Validasi dilakukan berlapis Pak/Bu:
+1. Di level aplikasi pakai Laravel validator
+2. Di database ada constraints seperti foreign key dan unique
+3. Tipe data spesifik mencegah data tidak valid
+4. Status booking untuk tracking progress transaksi"
+
+### 9. File Storage
+
+Penguji: "Bagaimana penanganan file seperti foto tukang cukur atau bukti pembayaran?"
+
+Mahasiswa: "Untuk file Pak/Bu, saya tidak simpan langsung di database. Yang disimpan hanya path file-nya, sedangkan filenya disimpan di storage Laravel. Ini lebih efisien dan aman. Ada validation untuk tipe file dan ukuran maksimal."
+
+### 10. Session dan Cache
+
+Penguji: "Jelaskan penggunaan tabel sessions dan cache!"
+
+Mahasiswa: "Tabel sessions Pak/Bu untuk menyimpan data sesi user, termasuk authentication. Untuk cache, saya gunakan untuk menyimpan data yang sering diakses seperti daftar layanan dan jadwal. Ini mengurangi beban database dan mempercepat response time."
+
+## Tips Menghadapi Sidang:
+
+1. Jawab dengan Struktur:
+   - Mulai dengan point utama
+   - Berikan contoh konkret
+   - Kaitkan dengan implementasi di sistem
+   - Tutup dengan manfaat/dampak
+
+2. Tunjukkan Pemahaman:
+   - Jelaskan alasan teknis
+   - Kaitkan dengan kebutuhan bisnis
+   - Tunjukkan pertimbangan keamanan
+   - Sampaikan rencana pengembangan
+
+3. Jika Tidak Yakin:
+   - Jangan mengada-ada
+   - Sampaikan pemahaman secara umum
+   - Akui jika ada yang belum diimplementasi
+   - Tunjukkan rencana perbaikan
+
+4. Sikap Saat Sidang:
+   - Percaya diri tapi tidak sombong
+   - Terima masukan dengan baik
+   - Jelaskan dengan tenang dan terstruktur
+   - Gunakan bahasa yang sopan dan formal
+
+## Catatan Penting:
+
+1. Pahami Betul:
+   - Struktur setiap tabel
+   - Alasan pemilihan tipe data
+   - Relasi antar tabel
+   - Fitur keamanan yang diimplementasi
+
+2. Siapkan Contoh:
+   - Kasus penggunaan tiap tabel
+   - Skenario error dan penanganannya
+   - Rencana pengembangan
+   - Optimasi yang sudah dilakukan
+
+3. Dokumentasi Pendukung:
+   - File migration
+   - Schema database
+   - Backup strategy
+   - Security measures
+
+4. Yang Sering Ditanya:
+   - Alasan penggunaan migration
+   - Struktur dan relasi tabel
+   - Keamanan database
+   - Rencana pengembangan
+   - Optimasi dan performa
