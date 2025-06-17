@@ -10,6 +10,7 @@ use App\Models\Service;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BookingController extends Controller
 {
@@ -74,11 +75,11 @@ class BookingController extends Controller
             }
 
             // Generate payment link
-            $paymentLink = "https://barbershopku.online/payment/{$booking->id}";
+            $paymentLink = env('APP_URL') . "/payment/{$booking->id}";
 
             // Send email
             $client = new Client();
-            $response = $client->post('http://103.87.67.71:7001/email/send', [
+            $response = $client->post(env('PROVIDER_API') . '/email/send', [
                 'json' => [
                     'email' => env('MAIL_USERNAME'),
                     'password' => env('MAIL_PASSWORD'),
@@ -122,7 +123,7 @@ class BookingController extends Controller
             "Terima kasih telah memilih layanan kami. Sampai jumpa di barbershop!";
 
         $client = new Client();
-        $response = $client->post('http://103.87.67.71:7001/email/send', [
+        $response = $client->post(env('SOULCDE_API') . '/email/send', [
             'json' => [
                 'email' => env('MAIL_USERNAME'),
                 'password' => env('MAIL_PASSWORD'),

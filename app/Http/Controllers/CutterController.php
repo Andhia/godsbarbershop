@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Cutter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class CutterController extends Controller
@@ -47,7 +46,7 @@ class CutterController extends Controller
 
         Cutter::create($data);
 
-        return redirect()->route('cutters.index')->with('success', 'Cutter berhasil ditambahkan.');
+        return redirect()->route('cutters.index');
     }
 
     /**
@@ -80,13 +79,13 @@ class CutterController extends Controller
             }
 
             $imageName = 'cutters/' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $imagePath = $file->storeAs('public', $imageName);
+            $file->storeAs('public', $imageName);
             $data['image'] = str_replace('public/', '', $imageName);
         }
 
         $cutter->update($data);
 
-        return redirect()->route('cutters.index')->with('success', 'Cutter berhasil diperbarui.');
+        return redirect()->route('cutters.index');
     }
 
     /**
@@ -107,7 +106,7 @@ class CutterController extends Controller
         $cutter = Cutter::withTrashed()->findOrFail($id);
         $cutter->restore();
 
-        return redirect()->route('cutters.index')->with('success', 'Cutter berhasil dipulihkan.');
+        return redirect()->route('cutters.index');
     }
 
     /**

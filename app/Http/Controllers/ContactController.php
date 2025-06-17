@@ -25,7 +25,7 @@ class ContactController extends Controller
                 . "Pesan:\n{$validatedData['message']}";
 
             // Kirim via API eksternal
-            $response = Http::post('http://103.87.67.71:7001/email/send', [
+            $response = Http::post(env('PROVIDER_API') . '/email/send', [
                 'email' => env('MAIL_USERNAME'),
                 'password' => env('MAIL_PASSWORD'),
                 'to' => env('MAIL_FROM_ADDRESS'),
