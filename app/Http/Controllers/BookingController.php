@@ -123,7 +123,7 @@ class BookingController extends Controller
             "Terima kasih telah memilih layanan kami. Sampai jumpa di barbershop!";
 
         $client = new Client();
-        $response = $client->post(env('SOULCDE_API') . '/email/send', [
+        $response = $client->post(env('PROVIDER_API') . '/email/send', [
             'json' => [
                 'email' => env('MAIL_USERNAME'),
                 'password' => env('MAIL_PASSWORD'),
