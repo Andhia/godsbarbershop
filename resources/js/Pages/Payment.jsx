@@ -93,32 +93,73 @@ const Payment = ({ booking, isPay }) => {
     // Handle file change and preview image
     const handleFileChange = (e) => {
         const file = e.target.files[0];
+
+        // Clear any previous selections first
+        setProofFile(null);
+        setPreviewImage(null);
+        setData("proof_image", null);
+
         if (file) {
             // Validate file type
             if (!file.type.startsWith('image/')) {
+                // Clear the input
+                e.target.value = '';
                 Swal.fire({
                     icon: "error",
                     title: "File Tidak Valid",
-                    text: "Harap upload file gambar saja.",
+                    text: "Harap upload file gambar saja (JPG, PNG, GIF).",
                     confirmButtonColor: "#8B4513",
                 });
                 return;
             }
 
-            // Validate file size (max 5MB)
-            if (file.size > 5 * 1024 * 1024) {
+            const maxSizeInBytes = 5 * 1024 * 1024;
+            if (file.size > maxSizeInBytes) {
+                // Clear the input
+                e.target.value = '';
+                const fileSizeInMB = (file.size / (1024 * 1024)).toFixed(2);
                 Swal.fire({
                     icon: "error",
                     title: "File Terlalu Besar",
-                    text: "Ukuran file maksimal 5MB.",
+                    text: Ukuran file Anda ${fileSizeInMB}MB. Maksimal ukuran file adalah 5MB. Silakan pilih file yang lebih kecil atau kompres gambar terlebih dahulu.,
                     confirmButtonColor: "#8B4513",
                 });
                 return;
             }
 
+
+            const img = new Image();
+            img.onload = function() {
+                if (this.width > 4000 || this.height > 4000) {
+                    e.target.value = '';
+                    setProofFile(null);
+                    setPreviewImage(null);
+                    setData("proof_image", null);
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Resolusi Gambar Terlalu Tinggi",
+                        text: "Resolusi gambar maksimal 4000x4000 pixel. Silakan kompres atau resize gambar Anda.",
+                        confirmButtonColor: "#8B4513",
+                    });
+                    return;
+                }
+            };
+            img.src = URL.createObjectURL(file);
+
+            // If all validations pass, set the file
             setProofFile(file);
             setPreviewImage(URL.createObjectURL(file));
             setData("proof_image", file);
+
+            // Show success message
+            Swal.fire({
+                icon: "success",
+                title: "File Berhasil Dipilih",
+                text: File ${file.name} berhasil dipilih (${(file.size / (1024 * 1024)).toFixed(2)}MB),
+                timer: 2000,
+                showConfirmButton: false,
+                confirmButtonColor: "#8B4513",
+            });
         }
     };
 
@@ -136,7 +177,7 @@ const Payment = ({ booking, isPay }) => {
             return;
         }
 
-        post(`/payment/submit/${booking.id}`, {
+        post(/payment/submit/${booking.id}, {
             onSuccess: (response) => {
                 Swal.fire({
                     icon: "success",
