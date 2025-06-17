@@ -121,7 +121,7 @@ const Payment = ({ booking, isPay }) => {
                 Swal.fire({
                     icon: "error",
                     title: "File Terlalu Besar",
-                    text: Ukuran file Anda ${fileSizeInMB}MB. Maksimal ukuran file adalah 5MB. Silakan pilih file yang lebih kecil atau kompres gambar terlebih dahulu.,
+                    text: `Ukuran file Anda ${fileSizeInMB}MB. Maksimal ukuran file adalah 5MB. Silakan pilih file yang lebih kecil atau kompres gambar terlebih dahulu.`,
                     confirmButtonColor: "#8B4513",
                 });
                 return;
@@ -155,7 +155,7 @@ const Payment = ({ booking, isPay }) => {
             Swal.fire({
                 icon: "success",
                 title: "File Berhasil Dipilih",
-                text: File ${file.name} berhasil dipilih (${(file.size / (1024 * 1024)).toFixed(2)}MB),
+                text: `File ${file.name} berhasil dipilih (${(file.size / (1024 * 1024)).toFixed(2)}MB)`,
                 timer: 2000,
                 showConfirmButton: false,
                 confirmButtonColor: "#8B4513",
@@ -177,7 +177,7 @@ const Payment = ({ booking, isPay }) => {
             return;
         }
 
-        post(/payment/submit/${booking.id}, {
+        post(`/payment/submit/${booking.id}`, {
             onSuccess: (response) => {
                 Swal.fire({
                     icon: "success",
