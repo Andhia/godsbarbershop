@@ -35,7 +35,7 @@ class CutterController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5048',
         ]);
 
         $data = $request->only('name');
@@ -66,22 +66,19 @@ class CutterController extends Controller
     {
         $request->validate([
             'name' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5048',
         ]);
 
         $data = $request->only('name');
 
         if ($request->hasFile('image')) {
-            $file = $request->file('image');
-
             if ($cutter->image) {
                 Storage::disk('public')->delete($cutter->image);
             }
 
-            $imageName = 'cutters/' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('public', $imageName);
-            $data['image'] = str_replace('public/', '', $imageName);
+            $data['image'] = $request->file('image')->store('cutters', 'public');
         }
+
 
         $cutter->update($data);
 
